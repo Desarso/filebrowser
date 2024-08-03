@@ -1,0 +1,44 @@
+# Use a base image with build tools
+FROM golang AS builder
+
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the source code
+COPY . .
+
+
+# Build the filebrowser binary
+RUN make build
+
+
+
+FROM debian:latest
+
+# Install necessary dependencies
+RUN apt-get update && \
+    apt-get install -y ca-certificates curl jq
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the built binary and configuration from the builder image
+COPY --from=builder /app/filebrowser /filebrowser
+COPY --from=builder /app/docker_config.json /.filebrowser.json
+
+# Set file permissions
+RUN chmod +x /filebrowser
+
+# Define the entry point
+ENTRYPOINT ["/filebrowser"]
+
+# Expose necessary ports
+EXPOSE 8080
+
+# Define a volume for data
+VOLUME /srv

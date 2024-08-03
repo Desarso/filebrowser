@@ -11,9 +11,10 @@ HEALTHCHECK --start-period=2s --interval=5s --timeout=3s \
     CMD /healthcheck.sh || exit 1
 
 VOLUME /srv
-EXPOSE 80
+EXPOSE 8080
 
 COPY docker_config.json /.filebrowser.json
 COPY filebrowser /filebrowser
+RUN chmod +x /filebrowser
 
-ENTRYPOINT [ "/filebrowser" ]
+ENTRYPOINT [ "/f" ]
