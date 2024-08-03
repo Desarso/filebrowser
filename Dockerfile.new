@@ -34,11 +34,13 @@ COPY --from=builder /app/docker_config.json /.filebrowser.json
 # Set file permissions
 RUN chmod +x /filebrowser
 
-# Define the entry point
-ENTRYPOINT ["/filebrowser"]
 
 # Expose necessary ports
 EXPOSE 8080
 
 # Define a volume for data
 VOLUME /srv
+
+
+ENTRYPOINT ["filebrowser"]
+CMD ["-a", "0.0.0.0", "-p", "8080"]
